@@ -60,7 +60,7 @@ attack_paths = {
         WHERE {workload_query()}
         """,
     # Subject -> Pod
-    Relationship.EXEC_INTO: "MATCH (src)-[:GRANTS_EXEC_CREATE]->(dest:Pod)<-[:GRANTS_GET]-(src)",
+    Relationship.EXEC_INTO: "MATCH (src)-[:GRANTS_EXEC_CREATE|GRANTS_EXEC_GET]->(dest:Pod)<-[:GRANTS_GET]-(src)",
     # Subject -> Pod
     Relationship.REPLACE_IMAGE: "MATCH (src)-[:GRANTS_PATCH]->(dest:Pod)",
     # Subject -> Pod
