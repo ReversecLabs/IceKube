@@ -118,7 +118,7 @@ attack_paths = {
     # Can jump to pods running on node
     Relationship.ACCESS_POD: "MATCH (src:Node)-[:HOSTS_POD]->(dest:Pod)",
     # Can exec into pods on a node
-    Relationship.CAN_EXEC_THROUGH_KUBELET: "MATCH (src)-[:GRANTS_PROXY_CREATE]->(:Node)-[:HOSTS_POD]->(dest:Pod)",
+    Relationship.CAN_EXEC_THROUGH_KUBELET: "MATCH (src)-[:GRANTS_PROXY_CREATE|GRANTS_PROXY_GET]->(:Node)-[:HOSTS_POD]->(dest:Pod)",
     # Can update aws-auth ConfigMap
     Relationship.UPDATE_AWS_AUTH: """
         MATCH (src)-[:GRANTS_PATCH|GRANTS_UPDATE]->(:ConfigMap {

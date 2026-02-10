@@ -18,7 +18,7 @@ RBAC permissions regarding the `nodes/proxy`sub resource should be reviewed. Acc
 ### Cypher Deep-Dive
 
 ```cypher
-MATCH (src)-[:GRANTS_PROXY_CREATE]->(:Node)-[:HOSTS_POD]->(dest:Pod)
+MATCH (src)-[:GRANTS_PROXY_CREATE|GRANTS_PROXY_GET]->(:Node)-[:HOSTS_POD]->(dest:Pod)
 ```
 
-The above query finds subjects (`src`) with the create permission on the `nodes/proxy` sub resource. The target is set as pods (`dest`) running on that particular node determined through the `HOSTS_POD` relationship.
+The above query finds subjects (`src`) with the create/get permission on the `nodes/proxy` sub resource. The target is set as pods (`dest`) running on that particular node determined through the `HOSTS_POD` relationship.
