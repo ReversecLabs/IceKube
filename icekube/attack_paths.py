@@ -154,4 +154,8 @@ attack_paths = {
         MATCH (src:Node), (dest:ClusterRoleBinding)-[:GRANTS_PERMISSION]->(:ClusterRole {name: "cluster-admin"})
         WHERE any(x in ["master", "control-plane"] WHERE x in src.node_roles)
         """,
+    Relationship.PERSISTENT_VOLUME_CREATION: f"""
+        MATCH (src)-[:BOUND_TO]->(:ClusterRoleBinding)-[:GRANTS_PERSISTENTVOLUMES_CREATE]->(), (dest:Node)
+        WHERE (src)-[:BOUND_TO]->(:RoleBinding|ClusterRoleBinding)-[:GRANTS_PODS_CREATE|{create_workload_query()}]->()
+        """,
 }

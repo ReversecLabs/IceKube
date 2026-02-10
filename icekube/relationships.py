@@ -86,6 +86,8 @@ class Relationship:
     UPDATE_AWS_AUTH: ClassVar[str] = "UPDATE_AWS_AUTH"
     AZURE_POD_IDENTITY_EXCEPTION: ClassVar[str] = "AZURE_POD_IDENTITY_EXCEPTION"
 
+    PERSISTENT_VOLUME_CREATION: ClassVar[str] = "PERSISTENT_VOLUME_CREATION"
+
     # Current resource defines the spec/creation of the subresource
     DEFINES: ClassVar[str] = "DEFINES"
     # Defines a reference to another object (e.g. Pod -> ServiceAccount)
