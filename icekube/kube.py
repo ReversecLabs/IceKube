@@ -148,11 +148,15 @@ def api_resources() -> List[APIResource]:
 def all_resources(
     preferred_versions_only: bool = True,
     ignore: Optional[List[str]] = None,
+    only: Optional[List[str]] = None,
 ) -> Iterator[Resource]:
     load_kube_config()
 
     if ignore is None:
         ignore = []
+
+    if only is None:
+        only = []
 
     all_namespaces: List[str] = [
         x.metadata.name for x in client.CoreV1Api().list_namespace().items
@@ -167,6 +171,9 @@ def all_resources(
             continue
 
         if resource_kind.name in ignore:
+            continue
+
+        if only and resource_kind.name not in only:
             continue
 
         logger.info(f"Fetching {resource_kind.name} resources")

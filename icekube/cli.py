@@ -24,7 +24,7 @@ from tqdm import tqdm
 
 app = typer.Typer()
 
-IGNORE_DEFAULT = "events,componentstatuses"
+IGNORE_DEFAULT = ["events", "componentstatuses"]
 
 
 @app.command()
@@ -67,11 +67,20 @@ def purge():
 
 
 @app.command()
-def download(output_dir: str):
+def download(
+    output_dir: str,
+    ignore: List[str] = typer.Option(
+        IGNORE_DEFAULT, help="Names of resource types to ignore"
+    ),
+    only: List[str] = typer.Option(
+        [],
+        help="Names of resource types to only include (those in ignore are still ignored)",
+    ),
+):
     path = Path(output_dir)
     path.mkdir(exist_ok=True)
 
-    resources = all_resources()
+    resources = all_resources(ignore=ignore, only=only)
     metadata = metadata_download()
 
     with open(path / "_metadata.json", "w") as fs:
