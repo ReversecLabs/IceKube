@@ -69,6 +69,11 @@ class Resource(BaseModel):
         return cast(Dict[str, Any], json.loads(self.raw or "{}"))
 
     @computed_field  # type: ignore
+    @cached_property
+    def annotations(self) -> Dict[str, Any]:
+        return self.data.get("metadata", {}).get("annotations") or {}
+
+    @computed_field  # type: ignore
     @property
     def labels(self) -> Dict[str, str]:
         return cast(Dict[str, str], self.data.get("metadata", {}).get("labels", {}))

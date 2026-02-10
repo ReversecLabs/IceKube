@@ -43,29 +43,25 @@ class Secret(Resource):
     def secret_type(self) -> str:
         return cast(str, self.data.get("type", ""))
 
-    @computed_field  # type: ignore
-    @cached_property
-    def annotations(self) -> Dict[str, Any]:
-        return self.data.get("metadata", {}).get("annotations") or {}
-
     def relationships(self, initial: bool = True) -> List[RELATIONSHIP]:
         relationships = super().relationships()
 
         if self.secret_type == "kubernetes.io/service-account-token":
             from icekube.models.serviceaccount import ServiceAccount
 
-            sa = self.annotations.get("kubernetes.io/service-account.name")
-            if sa:
-                account = ServiceAccount(
-                    name=sa,
-                    namespace=cast(str, self.namespace),
-                )
-                relationships.append(
-                    (
-                        self,
-                        Relationship.AUTHENTICATION_TOKEN_FOR,
-                        account,
-                    ),
-                )
+            if not self.labels.get("kubernetes.io/legacy-token-invalid-since"):
+                sa = self.annotations.get("kubernetes.io/service-account.name")
+                if sa:
+                    account = ServiceAccount(
+                        name=sa,
+                        namespace=cast(str, self.namespace),
+                    )
+                    relationships.append(
+                        (
+                            self,
+                            Relationship.AUTHENTICATION_TOKEN_FOR,
+                            account,
+                        ),
+                    )
 
         return relationships
