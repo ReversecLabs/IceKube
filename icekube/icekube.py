@@ -151,5 +151,7 @@ def setup_attack_paths() -> None:
 
 def purge_neo4j() -> None:
     with get_driver().session() as session:
-        session.run("MATCH (x)-[r]-(y) DELETE x, r, y")
-        session.run("MATCH (x) DELETE x")
+        session.run(
+            "MATCH ()-[r]->() CALL { WITH r DELETE r } IN TRANSACTIONS OF 10000 ROWS"
+        )
+        session.run("MATCH (n) CALL { WITH n DELETE n } IN TRANSACTIONS OF 10000 ROW")
