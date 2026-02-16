@@ -29,8 +29,9 @@ IGNORE_DEFAULT = ["events", "componentstatuses"]
 
 @app.command()
 def run(
-    ignore: str = typer.Option(
+    ignore: List[str] = typer.Option(
         IGNORE_DEFAULT,
+        "-i",
         help="Names of resource types to ignore",
     ),
 ):
@@ -40,13 +41,14 @@ def run(
 
 @app.command()
 def enumerate(
-    ignore: str = typer.Option(
+    ignore: List[str] = typer.Option(
         IGNORE_DEFAULT,
+        "-i",
         help="Names of resource types to ignore",
     ),
 ):
     create_indices()
-    enumerate_resource_kind(ignore.split(","))
+    enumerate_resource_kind(ignore)
     generate_relationships()
 
 
@@ -70,7 +72,7 @@ def purge():
 def download(
     output_dir: str,
     ignore: List[str] = typer.Option(
-        IGNORE_DEFAULT, help="Names of resource types to ignore"
+        IGNORE_DEFAULT, "-i", help="Names of resource types to ignore"
     ),
     only: List[str] = typer.Option(
         [],
@@ -154,8 +156,8 @@ def load(input_dir: str, attack_paths: bool = True):
                 )
         print("")
 
-    kube.all_resources = all_resources
-    icekube.all_resources = all_resources
+    kube.all_resources = all_resources  # type: ignore
+    icekube.all_resources = all_resources  # type: ignore
 
     if attack_paths:
         run(IGNORE_DEFAULT)

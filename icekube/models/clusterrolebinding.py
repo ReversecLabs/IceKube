@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 from icekube.models.base import RELATIONSHIP, Resource
 from icekube.models.clusterrole import ClusterRole
@@ -26,7 +26,7 @@ def get_role(
         return find_or_mock(
             Role,
             name=role_ref["name"],
-            namespace=role_ref.get("namespace", namespace),
+            namespace=cast(str, role_ref.get("namespace", namespace)),
         )
     else:
         raise Exception(f"Unknown RoleRef kind: {role_ref['kind']}")

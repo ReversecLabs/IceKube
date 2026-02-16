@@ -36,7 +36,7 @@ The contents of the cluster can also be downloade with `icekube download` or thr
 
 #### Filtering Resources
 
-It is possible to filter out specific resource types from enumeration. This can be done with the `--ignore` parameter to `enumerate` and `run` which takes the resource types comma-delimtied. For example, if you wish to exclude events and componentstatuses, you could run `icekube run --ignore events,componentstatuses` (NOTE: this is the default)
+It is possible to filter out specific resource types from enumeration. This can be done with the `--ignore` / `-i` parameter to `enumerate` and `run` which takes the resource types. For example, if you wish to exclude events and componentstatuses, you could run `icekube run -i events -i componentstatuses` (NOTE: this is the default)
 
 Sensitive data from secrets are not stored in IceKube, data retrieved from the Secret resource type have their data fields deleted on ingestion. It is recommended to include secrets as part of the query if possible as IceKube can still analyse the secret type and relevant annotations to aid with attack path generation. 
 
