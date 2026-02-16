@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from functools import cached_property
-from typing import Any, Dict, List, Optional, cast
+from typing import List, Optional, cast
 
 from icekube.models.base import RELATIONSHIP, Resource
 from icekube.relationships import Relationship

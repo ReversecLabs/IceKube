@@ -31,11 +31,11 @@ class ServiceAccount(Resource):
     ) -> List[RELATIONSHIP]:
         relationships = super().relationships()
 
-        # This is to account for secrets that we have not been able to get the metadata for
+        # This is to account for secrets that we have not got the metadata for
         # If we have the metadata, the relevant relationship will be generated from that
         # resource
-        SECRET_QUERY = "MATCH ({prefix}:Secret {{ namespace: ${prefix}_namespace, name: ${prefix}_name }})"
-        SECRET_QUERY += " WHERE {prefix}.raw IS NULL "
+        QUERY = "MATCH ({prefix}:Secret {{ namespace: ${prefix}_namespace, name: ${prefix}_name }})"
+        QUERY += " WHERE {prefix}.raw IS NULL "
 
         if initial:
             relationships += [(self, Relationship.REFERENCES, x) for x in self.secrets]
@@ -43,7 +43,7 @@ class ServiceAccount(Resource):
             relationships += [
                 (
                     (
-                        SECRET_QUERY,
+                        QUERY,
                         {"namespace": cast(str, x.namespace), "name": x.name},
                     ),
                     Relationship.AUTHENTICATION_TOKEN_FOR,

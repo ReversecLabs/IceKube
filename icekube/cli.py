@@ -74,7 +74,7 @@ def download(
     ),
     only: List[str] = typer.Option(
         [],
-        help="Names of resource types to only include (those in ignore are still ignored)",
+        help="Resource types to solely include (those in ignore are still ignored)",
     ),
 ):
     path = Path(output_dir)
