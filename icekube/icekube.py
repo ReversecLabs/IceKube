@@ -1,6 +1,7 @@
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
+from itertools import chain
 from typing import List, Optional
 
 from icekube.attack_paths import attack_paths
@@ -12,6 +13,7 @@ from icekube.kube import (
 )
 from icekube.models import Cluster, Signer
 from icekube.models.base import Resource
+from icekube.models.clusterrolebinding import ClusterRoleBinding
 from icekube.neo4j import create, find, get, get_driver
 from neo4j import BoltDriver
 from tqdm import tqdm
@@ -98,6 +100,13 @@ def relationship_generator(
             session.run(cmd, kwargs)
 
 
+def object_updater(driver: BoltDriver, resource: Resource):
+    with driver.session() as session:
+        logger.info(f"Updating object for {resource}")
+        cmd, kwargs = create(resource)
+        session.run(cmd, **kwargs)
+
+
 def generate_relationships(threaded: bool = False) -> None:
     logger.info("Generating relationships")
     logger.info("Fetching resources from neo4j")
@@ -128,6 +137,22 @@ def generate_relationships(threaded: bool = False) -> None:
         print("Second pass for relationships")
         for resource in tqdm(resources):
             generator(resource)
+        print("")
+
+    # Re-save certain objects to update any computed fields with the latest
+    to_update = [ClusterRoleBinding]
+    resources = chain.from_iterable(find(resource) for resource in to_update)
+    updater = partial(object_updater, driver)
+
+    if threaded:
+        with ThreadPoolExecutor() as exc:
+            for resource in to_update:
+                exc.map(updater, resources)
+    else:
+        print("Updating objects with computed fields")
+        for resource in to_update:
+            for obj in tqdm(resources):
+                updater(obj)
         print("")
 
 

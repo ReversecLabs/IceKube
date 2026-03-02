@@ -158,4 +158,7 @@ attack_paths = {
         MATCH (src)-[:BOUND_TO]->(:ClusterRoleBinding)-[:GRANTS_PERSISTENTVOLUMES_CREATE]->(), (dest:Node)
         WHERE (src)-[:BOUND_TO]->(:RoleBinding|ClusterRoleBinding)-[:GRANTS_PODS_CREATE|{create_workload_query()}]->()
         """,
+    Relationship.ADMIN_OF: f"""
+        MATCH (src:ClusterRoleBinding {{gives_cluster_admin: true}})-[:WITHIN_CLUSTER]-(dest:Cluster)
+        """,
 }

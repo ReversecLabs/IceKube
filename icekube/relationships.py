@@ -53,6 +53,8 @@ class Relationship:
     GRANTS_TOKEN_CREATE: ClassVar[str] = "GRANTS_TOKEN_CREATE"
     GRANTS_EPHEMERAL_PATCH: ClassVar[str] = "GRANTS_EPHEMERAL_PATCH"
 
+    ADMIN_OF: ClassVar[str] = "ADMIN_OF"
+
     BOUND_TO: ClassVar[str] = "BOUND_TO"
     USES_ACCOUNT: ClassVar[str] = "USES_ACCOUNT"
     MOUNTS_SECRET: ClassVar[str] = "MOUNTS_SECRET"

@@ -79,6 +79,18 @@ class ClusterRoleBinding(Resource):
     def subjects(self) -> List[Union[ServiceAccount, User, Group]]:
         return get_subjects(self.data.get("subjects", []))
 
+    @computed_field
+    @cached_property
+    def gives_cluster_admin(self) -> bool:
+        return isinstance(self.role, ClusterRole) and self.role.all_permissions
+
+    @property
+    def db_labels(self) -> Dict[str, Any]:
+        return {
+            **super().db_labels,
+            "gives_cluster_admin": self.gives_cluster_admin,
+        }
+
     def relationships(
         self,
         initial: bool = True,

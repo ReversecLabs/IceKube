@@ -63,26 +63,26 @@ Here is a quick introductory way on running IceKube for those new to the project
 The following query will find all resources that have `cluster-admin` permissions. This is enforced through a Cluster Role Binding to ensure the permissions are cluster-wide
 
 ```cypher
-MATCH p = SHORTEST 1 (src)-[r {attack_path: 1}]->+(crb:ClusterRoleBinding)-[:GRANTS_PERMISSION {attack_path: 1}]->(cr:ClusterRole {name: "cluster-admin"}) RETURN p
+MATCH p = SHORTEST 1 (src)-[r {attack_path: 1}]->+()-[:ADMIN_OF]->(cl:Cluster) RETURN p
 ```
 
 This performs the same, but restricts the query to start at nodes of type Pod / ServiceAccount / User / Group
 
 ```cypher
-MATCH p = SHORTEST 1 (src)-[r {attack_path: 1}]->+(crb:ClusterRoleBinding)-[:GRANTS_PERMISSION {attack_path: 1}]->(cr:ClusterRole {name: "cluster-admin"}) WHERE (src:ServiceAccount OR src:Pod or src:User or src:Group) RETURN p
+MATCH p = SHORTEST 1 (src)-[r {attack_path: 1}]->+()-[:ADMIN_OF]->(cl:Cluster) WHERE (src:ServiceAccount OR src:Pod or src:User or src:Group) RETURN p
 ```
 
 Using the old `shortestPath` syntax:
 
 ```cypher
-MATCH (crb:ClusterRoleBinding)-[r:GRANTS_PERMISSION {attack_path: 1}]->(cr:ClusterRole {name: 'cluster-admin'})
-WITH crb, cr, r
+MATCH (crb:ClusterRoleBinding)-[r:ADMIN_OF]->(cl:Cluster)
+WITH crb, cl, r
 MATCH (src) WHERE src:ServiceAccount OR src:Pod OR src:User or src:Group
-WITH src, crb, cr, r
+WITH src, crb, cl, r
 UNWIND src as s
 MATCH p=shortestPath((s)-[*]->(crb))
 WHERE all(r in relationships(p) where r.attack_path is not null)
-RETURN p, cr, r
+RETURN p, cl, r
 ```
 
 ## Acknowledgements

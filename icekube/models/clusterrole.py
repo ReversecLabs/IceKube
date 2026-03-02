@@ -14,6 +14,19 @@ class ClusterRole(Resource):
         "authorization.openshift.io",
     ]
 
+    @computed_field
+    @cached_property
+    def all_permissions(self) -> bool:
+        for rule in self.rules:
+            if (
+                "*" in rule.apiGroups
+                and "*" in rule.resources
+                and "*" in rule.verbs
+                and not rule.resourceNames
+            ):
+                return True
+        return False
+
     @computed_field  # type: ignore
     @cached_property
     def rules(self) -> List[PolicyRule]:
