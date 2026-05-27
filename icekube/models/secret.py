@@ -18,8 +18,9 @@ class Secret(Resource):
         if v:
             data = json.loads(v)
 
-            if "data" in data:
-                del data["data"]
+            for field in ("data", "stringData"):
+                if field in data:
+                    del data[field]
 
             last_applied_configuration = (
                 data.get("metadata", {})
@@ -28,8 +29,9 @@ class Secret(Resource):
             )
             if last_applied_configuration:
                 last_applied_configuration = json.loads(last_applied_configuration)
-                if "data" in last_applied_configuration:
-                    del last_applied_configuration["data"]
+                for field in ("data", "stringData"):
+                    if field in last_applied_configuration:
+                        del last_applied_configuration[field]
                 data["metadata"]["annotations"][
                     "kubectl.kubernetes.io/last-applied-configuration"
                 ] = json.dumps(last_applied_configuration)
