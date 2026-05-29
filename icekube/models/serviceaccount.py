@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import List, cast
+from typing import Any, Dict, List, Optional, cast
 
 from icekube.models.base import RELATIONSHIP, Resource
 from icekube.models.secret import Secret
@@ -24,6 +24,24 @@ class ServiceAccount(Resource):
             )
 
         return secrets
+
+    @computed_field  # type: ignore
+    @cached_property
+    def cloud_identity(self) -> Optional[str]:
+        keys = ["eks.amazonaws.com/role-arn", "azure.workload.identity/client-id"]
+
+        for key in keys:
+            if key in self.annotations:
+                return cast(str, self.annotations[key])
+
+        return None
+
+    @property
+    def db_labels(self) -> Dict[str, Any]:
+        return {
+            **super().db_labels,
+            "cloud_identity": self.cloud_identity,
+        }
 
     def relationships(
         self,

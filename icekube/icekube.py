@@ -2,7 +2,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from itertools import chain
-from typing import List, Optional
+from typing import Iterable, List, Optional
 
 from icekube.attack_paths import attack_paths
 from icekube.kube import (
@@ -111,7 +111,7 @@ def generate_relationships(threaded: bool = False) -> None:
     logger.info("Generating relationships")
     logger.info("Fetching resources from neo4j")
     driver = get_driver()
-    resources = find()
+    resources: Iterable[Resource] = find()
     logger.info("Fetched resources from neo4j")
     generator = partial(relationship_generator, driver, True)
 
@@ -158,7 +158,10 @@ def generate_relationships(threaded: bool = False) -> None:
 
 def remove_attack_paths() -> None:
     with get_driver().session() as session:
-        session.run("MATCH ()-[r]-() WHERE r.attack_path IS NOT NULL DELETE r")
+        session.run(
+            "MATCH ()-[r]-() WHERE r.attack_path IS NOT NULL "
+            "CALL { WITH r DELETE r } IN TRANSACTIONS OF 10000 ROWS"
+        )
 
 
 def setup_attack_paths() -> None:

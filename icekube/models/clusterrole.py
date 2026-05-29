@@ -14,7 +14,7 @@ class ClusterRole(Resource):
         "authorization.openshift.io",
     ]
 
-    @computed_field
+    @computed_field  # type: ignore
     @cached_property
     def all_permissions(self) -> bool:
         for rule in self.rules:
